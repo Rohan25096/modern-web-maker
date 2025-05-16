@@ -87,6 +87,12 @@
   section {
     @apply py-16;
   }
+  
+  /* Canvas styling for tech background */
+  canvas {
+    display: block;
+    pointer-events: none;
+  }
 }
 
 @layer components {
@@ -132,5 +138,15 @@
   
   .social-icon {
     @apply w-10 h-10 rounded-full flex items-center justify-center text-foreground bg-secondary hover:bg-primary hover:text-white transition-colors duration-300;
+  }
+  
+  /* Tech background animation */
+  .tech-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
   }
 }

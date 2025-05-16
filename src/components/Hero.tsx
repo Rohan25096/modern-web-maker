@@ -1,11 +1,11 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const Hero = () => {
   const [typingText, setTypingText] = useState("");
   const [isTyping, setIsTyping] = useState(true);
   const [typingIndex, setTypingIndex] = useState(0);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   
   const titles = ["Data Scientist", "ML Engineer", "Web Developer", "Problem Solver"];
 
@@ -54,19 +54,111 @@ const Hero = () => {
     }
   }, [isTyping, typingIndex, titles]);
 
-  // Track mouse movement for parallax effect
+  // Animation for tech background
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-      const x = (clientX / window.innerWidth) - 0.5;
-      const y = (clientY / window.innerHeight) - 0.5;
-      setMousePosition({ x, y });
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Set canvas size to match window size
+    const setCanvasSize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    setCanvasSize();
+    window.addEventListener('resize', setCanvasSize);
+
+    // Particles for tech background
+    class Particle {
+      x: number;
+      y: number;
+      size: number;
+      speedX: number;
+      speedY: number;
+      color: string;
+
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.speedY = (Math.random() - 0.5) * 0.5;
+        this.color = `rgba(66, 135, 245, ${Math.random() * 0.5 + 0.2})`;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+
+      draw() {
+        if (!ctx) return;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Create particle array
+    const particlesArray: Particle[] = [];
+    const numberOfParticles = Math.min(100, (canvas.width * canvas.height) / 9000);
     
+    for (let i = 0; i < numberOfParticles; i++) {
+      particlesArray.push(new Particle());
+    }
+
+    // Connection lines between particles
+    const connectParticles = () => {
+      for (let a = 0; a < particlesArray.length; a++) {
+        for (let b = a; b < particlesArray.length; b++) {
+          const dx = particlesArray[a].x - particlesArray[b].x;
+          const dy = particlesArray[a].y - particlesArray[b].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          const maxDistance = 100;
+          
+          if (distance < maxDistance) {
+            if (!ctx) return;
+            ctx.strokeStyle = `rgba(66, 135, 245, ${1 - distance/maxDistance})`;
+            ctx.lineWidth = 0.2;
+            ctx.beginPath();
+            ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+            ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+            ctx.stroke();
+          }
+        }
+      }
+    };
+
+    // Animation loop
+    let animationFrameId: number;
+    
+    const animate = () => {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Update and draw particles
+      particlesArray.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+      
+      connectParticles();
+      animationFrameId = requestAnimationFrame(animate);
+    };
+    
+    animate();
+
+    // Cleanup
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('resize', setCanvasSize);
     };
   }, []);
 
@@ -75,20 +167,10 @@ const Hero = () => {
 
   return (
     <section id="home" className="min-h-screen flex items-center justify-center pt-16 overflow-hidden relative">
-      {/* Animated background circles */}
-      <div 
-        className="absolute w-72 h-72 bg-primary/10 rounded-full -top-10 -left-10 blur-xl"
-        style={{
-          transform: `translate(${mousePosition.x * -30}px, ${mousePosition.y * -30}px)`,
-          transition: 'transform 0.2s ease-out'
-        }}
-      />
-      <div 
-        className="absolute w-96 h-96 bg-primary/5 rounded-full -bottom-20 -right-20 blur-xl"
-        style={{
-          transform: `translate(${mousePosition.x * 30}px, ${mousePosition.y * 30}px)`,
-          transition: 'transform 0.2s ease-out'
-        }}
+      {/* Tech animated background */}
+      <canvas 
+        ref={canvasRef} 
+        className="absolute top-0 left-0 w-full h-full"
       />
 
       <div className="container mx-auto px-4 relative z-10">
@@ -123,16 +205,6 @@ const Hero = () => {
               className="btn btn-outline transform transition-all duration-300 hover:scale-105 hover:shadow-lg"
             >
               Get In Touch
-            </a>
-          </div>
-
-          {/* Scroll indicator */}
-          <div className="hidden md:block absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce mt-16">
-            <a href="#about" className="flex flex-col items-center text-muted-foreground hover:text-primary transition-colors">
-              <span className="text-sm mb-2">Scroll Down</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
             </a>
           </div>
         </div>
