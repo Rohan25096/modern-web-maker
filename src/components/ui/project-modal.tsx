@@ -22,7 +22,7 @@ interface ProjectModalProps {
 export function ProjectModal({ isOpen, onClose, project }: ProjectModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-y-auto animate-fade-in">
         <DialogHeader>
           <DialogTitle className="text-2xl">{project.title}</DialogTitle>
           <DialogDescription className="text-muted-foreground mt-2">
@@ -30,7 +30,7 @@ export function ProjectModal({ isOpen, onClose, project }: ProjectModalProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-4">
+        <div className="mt-4 transform transition-all duration-500 hover:scale-[1.02] rounded-md overflow-hidden">
           <img 
             src={project.image} 
             alt={project.title} 
@@ -49,18 +49,18 @@ export function ProjectModal({ isOpen, onClose, project }: ProjectModalProps) {
           <h3 className="font-semibold text-lg mb-2">Technologies</h3>
           <div className="flex flex-wrap gap-2">
             {project.technologies.map((tech, index) => (
-              <Badge key={index} variant="secondary">{tech}</Badge>
+              <Badge key={index} variant="secondary" className="hover:bg-primary hover:text-white transition-colors duration-300">{tech}</Badge>
             ))}
           </div>
         </div>
 
         <div className="flex justify-between items-center mt-6">
-          <Button variant="outline" asChild>
+          <Button variant="outline" asChild className="transform transition-all duration-300 hover:scale-105">
             <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
               <Github className="size-4" /> View Code
             </a>
           </Button>
-          <Button asChild>
+          <Button asChild className="transform transition-all duration-300 hover:scale-105">
             <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
               <ExternalLink className="size-4" /> Live Demo
             </a>
