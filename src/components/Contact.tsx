@@ -1,18 +1,48 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Mail, User, MessageSquare } from "lucide-react";
+
+// Form validation schema
+const formSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  subject: z.string().optional(),
+  message: z.string().min(10, { message: "Message must be at least 10 characters." }),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: ""
-  });
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const { toast } = useToast();
+  
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      subject: "",
+      message: ""
+    },
+  });
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -36,56 +66,40 @@ const Contact = () => {
     };
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    
-    // Validate form
-    if (!formData.name || !formData.email || !formData.message) {
-      toast({
-        title: "Error",
-        description: "Please fill in all required fields.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      toast({
-        title: "Error",
-        description: "Please enter a valid email address.",
-        variant: "destructive"
-      });
-      return;
-    }
-
+  const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
-
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
+    
+    try {
+      // In a real application, you would use a backend service or API
+      // Here we're simulating the email sending process
+      
+      // Create form data to send
+      const formData = {
+        ...data,
+        recipient: "rohansahoo2509@gmail.com",
+      };
+      
+      console.log("Sending email with data:", formData);
+      
+      // Simulate API call with timeout
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
       toast({
-        title: "Success",
-        description: "Your message has been sent. I'll get back to you soon!",
+        title: "Message sent!",
+        description: "Thank you for your message. I'll get back to you soon!",
       });
-
-      // Clear form
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        message: ""
+      
+      form.reset();
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast({
+        title: "Error",
+        description: "There was a problem sending your message. Please try again later.",
+        variant: "destructive"
       });
-    }, 1500);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -106,14 +120,12 @@ const Contact = () => {
             <div className="space-y-6">
               <div className="flex items-start">
                 <div className="bg-secondary p-2 rounded-full mr-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
+                  <Mail className="h-6 w-6 text-primary" />
                 </div>
                 <div>
                   <h4 className="font-semibold">Email</h4>
-                  <a href="mailto:your.email@example.com" className="text-primary hover:underline">
-                    your.email@example.com
+                  <a href="mailto:rohansahoo2509@gmail.com" className="text-primary hover:underline">
+                    rohansahoo2509@gmail.com
                   </a>
                 </div>
               </div>
@@ -145,88 +157,93 @@ const Contact = () => {
             </div>
           </div>
 
-          <div>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="name" className="block mb-2 font-medium">
-                  Name*
-                </label>
-                <input
-                  type="text"
-                  id="name"
+          <div className="bg-card border rounded-lg p-6 shadow-sm">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
                   name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="form-input"
-                  placeholder="Your name"
-                  required
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <User className="h-4 w-4" /> Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="Your name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
-
-              <div>
-                <label htmlFor="email" className="block mb-2 font-medium">
-                  Email*
-                </label>
-                <input
-                  type="email"
-                  id="email"
+                
+                <FormField
+                  control={form.control}
                   name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="form-input"
-                  placeholder="Your email"
-                  required
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Mail className="h-4 w-4" /> Email
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="your.email@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
-
-              <div>
-                <label htmlFor="subject" className="block mb-2 font-medium">
-                  Subject
-                </label>
-                <input
-                  type="text"
-                  id="subject"
+                
+                <FormField
+                  control={form.control}
                   name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  className="form-input"
-                  placeholder="Subject"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Subject (Optional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="What's this about?" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
                 />
-              </div>
-
-              <div>
-                <label htmlFor="message" className="block mb-2 font-medium">
-                  Message*
-                </label>
-                <textarea
-                  id="message"
+                
+                <FormField
+                  control={form.control}
                   name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  className="form-input min-h-[150px]"
-                  placeholder="Your message"
-                  required
-                ></textarea>
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="btn btn-primary w-full flex items-center justify-center"
-              >
-                {isSubmitting ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Sending...
-                  </>
-                ) : (
-                  "Send Message"
-                )}
-              </button>
-            </form>
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <MessageSquare className="h-4 w-4" /> Message
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Your message..."
+                          className="min-h-[120px] resize-none"
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <Button 
+                  type="submit" 
+                  className="w-full" 
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Sending...
+                    </>
+                  ) : (
+                    "Send Message"
+                  )}
+                </Button>
+              </form>
+            </Form>
           </div>
         </div>
       </div>
