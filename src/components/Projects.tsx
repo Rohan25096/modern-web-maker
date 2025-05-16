@@ -11,14 +11,25 @@ interface ProjectProps {
 }
 
 const ProjectCard = ({ project }: { project: ProjectProps }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
-    <div className="project-card group">
+    <div 
+      className="project-card group transform transition-all duration-300 hover:-translate-y-2"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="relative overflow-hidden h-64">
         <img 
           src={project.image} 
           alt={project.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className={`w-full h-full object-cover transition-transform duration-500 ${isHovered ? 'scale-110' : 'scale-100'}`}
         />
+        <div className={`absolute inset-0 bg-primary/20 backdrop-blur-sm opacity-0 transition-opacity duration-300 flex items-center justify-center ${isHovered ? 'opacity-100' : ''}`}>
+          <div className="text-center text-white p-4">
+            <p className="font-semibold">Click to view details</p>
+          </div>
+        </div>
       </div>
       <div className="p-6">
         <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
@@ -40,7 +51,7 @@ const ProjectCard = ({ project }: { project: ProjectProps }) => {
             href={project.demoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary hover:underline font-medium flex items-center"
+            className="text-primary hover:underline font-medium flex items-center group-hover:translate-x-1 transition-transform"
           >
             Live Demo
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
@@ -65,6 +76,7 @@ const ProjectCard = ({ project }: { project: ProjectProps }) => {
 
 const Projects = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [activeFilter, setActiveFilter] = useState("all");
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -91,40 +103,73 @@ const Projects = () => {
 
   const projects: ProjectProps[] = [
     {
-      title: "E-Commerce Website",
-      description: "A fully responsive e-commerce platform with product filtering, cart functionality, and checkout process.",
-      image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      technologies: ["React", "Node.js", "MongoDB", "Stripe"],
+      title: "Diabetes Prediction using MLP",
+      description: "A machine learning model using Multilayer Perceptron to predict diabetes risk based on patient health data.",
+      image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      technologies: ["Python", "TensorFlow", "Scikit-learn", "Pandas"],
       demoUrl: "https://example.com",
       githubUrl: "https://github.com"
     },
     {
-      title: "Portfolio Website",
-      description: "A personal portfolio website showcasing projects and skills with a modern and responsive design.",
-      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      technologies: ["HTML", "CSS", "JavaScript", "GSAP"],
+      title: "House Price Prediction",
+      description: "Linear Regression model to predict house prices based on various features like location, size, and amenities.",
+      image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      technologies: ["Python", "NumPy", "Pandas", "Scikit-learn"],
       demoUrl: "https://example.com",
       githubUrl: "https://github.com"
     },
     {
-      title: "Task Management App",
-      description: "A task management application with drag-and-drop functionality, notifications, and user authentication.",
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      technologies: ["Vue.js", "Firebase", "Tailwind CSS"],
+      title: "Employee Records Management System",
+      description: "A full-stack web application for managing employee records, attendance, and performance reviews.",
+      image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+      technologies: ["React", "Node.js", "MongoDB", "Express"],
       demoUrl: "https://example.com",
       githubUrl: "https://github.com"
     }
   ];
 
+  const filters = [
+    { name: "All", value: "all" },
+    { name: "ML", value: "ml" },
+    { name: "Web", value: "web" }
+  ];
+
+  const filteredProjects = activeFilter === "all" 
+    ? projects 
+    : activeFilter === "ml" 
+      ? projects.filter(p => p.title.includes("Prediction") || p.technologies.includes("TensorFlow") || p.technologies.includes("Scikit-learn")) 
+      : projects.filter(p => p.technologies.includes("React") || p.technologies.includes("Node.js"));
+
   return (
     <section id="projects" ref={sectionRef} className="py-20">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
           My <span className="text-primary">Projects</span>
         </h2>
 
+        <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
+          Explore my portfolio of machine learning models and web applications. Each project demonstrates my technical skills and problem-solving abilities.
+        </p>
+
+        {/* Project Filters */}
+        <div className="flex justify-center mb-12 gap-4">
+          {filters.map((filter) => (
+            <button
+              key={filter.value}
+              className={`px-4 py-2 rounded-full transition-all duration-300 ${
+                activeFilter === filter.value
+                  ? "bg-primary text-white"
+                  : "bg-secondary hover:bg-secondary/80"
+              }`}
+              onClick={() => setActiveFilter(filter.value)}
+            >
+              {filter.name}
+            </button>
+          ))}
+        </div>
+
         <div className={`grid md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          {projects.map((project, index) => (
+          {filteredProjects.map((project, index) => (
             <ProjectCard key={index} project={project} />
           ))}
         </div>

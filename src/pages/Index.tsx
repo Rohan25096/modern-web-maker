@@ -11,7 +11,7 @@ import Footer from "@/components/Footer";
 const Index = () => {
   useEffect(() => {
     // Set page title
-    document.title = "Portfolio | Web Developer";
+    document.title = "Portfolio | Data Scientist & ML Engineer";
   }, []);
 
   return (
