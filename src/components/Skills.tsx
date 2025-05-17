@@ -51,27 +51,25 @@ const Skills = () => {
   }, []);
 
   const frontendSkills: Skill[] = [
-    { name: "HTML", level: 95 },
-    { name: "CSS", level: 90 },
-    { name: "JavaScript", level: 85 },
-    { name: "React", level: 80 },
+    { name: "HTML", level: 90 },
+    { name: "CSS", level: 85 },
+    { name: "JavScript", level: 80 },
     { name: "TypeScript", level: 75 }
   ];
 
   const backendSkills: Skill[] = [
     { name: "Node.js", level: 75 },
     { name: "Express", level: 70 },
-    { name: "MongoDB", level: 65 },
+    { name: "Python", level: 65 },
     { name: "SQL", level: 60 },
-    { name: "GraphQL", level: 55 }
   ];
 
   const otherSkills: Skill[] = [
     { name: "Git", level: 85 },
-    { name: "Docker", level: 60 },
-    { name: "Figma", level: 70 },
-    { name: "SEO", level: 65 },
-    { name: "Agile", level: 75 }
+    { name: "Figma", level: 60 },
+    { name: "Lovable", level: 70 },
+    { name: "Scikit-Learn", level: 85},
+    { name: "Neural Networks", level: 85},
   ];
 
   return (

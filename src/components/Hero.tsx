@@ -177,7 +177,7 @@ const Hero = () => {
         <div className="text-center md:max-w-3xl mx-auto">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-foreground transition-all duration-300 hover:text-primary">
             Hello, I'm <span className="text-primary cursor-pointer" onClick={toggleEmoji}>
-              Your Name {showEmoji && "👋"}
+              Rohan {showEmoji && "👋"}
             </span>
           </h1>
           

@@ -139,7 +139,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-semibold">Location</h4>
-                  <p>San Francisco, California, USA</p>
+                  <p>Kolkata, West Bengal</p>
                 </div>
               </div>
 

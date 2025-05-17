@@ -38,33 +38,34 @@ const About = () => {
           <div className="order-2 md:order-1">
             <h3 className="text-2xl font-semibold mb-4">Who am I?</h3>
             <p className="text-muted-foreground mb-4">
-              I am a passionate web developer with a strong foundation in HTML, CSS, and JavaScript.
-              With several years of experience in building responsive and user-friendly websites,
-              I strive to create digital experiences that are both beautiful and functional.
+              I'm a passionate Machine Learning enthusiast with a deep curiosity for how intelligent systems can learn from data and improve over time.
+              My journey began with a fascination for algorithms and quickly evolved into hands-on projects involving data analysis, predictive modeling, and neural networks. 
+              I enjoy working with Python and am comfortable using tools like scikit-learn, TensorFlow, and PyTorch to build and evaluate models. 
+              Beyond coding, I invest time in understanding the mathematical and statistical principles that power machine learning, as I believe strong fundamentals are key to creating impactful solutions.
             </p>
             <p className="text-muted-foreground mb-6">
-              My journey in web development started in 2018, and since then,
-              I've worked on various projects ranging from small business websites to complex web applications.
-              I'm continuously learning and adapting to new technologies and methodologies to stay
-              at the forefront of web development.
+              What excites me most about ML is its ability to solve real-world problems across industries like healthcare, finance, and automation. 
+              I'm particularly drawn to projects that involve clean data pipelines, well-tuned models, and interpretable results. 
+              I constantly seek to improve my skills by reading research papers, following thought leaders, and experimenting with new techniques.
+              For me, Machine Learning is not just a technical field—it's a dynamic way of thinking that encourages continuous learning, creative problem-solving, and meaningful innovation.
             </p>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <h4 className="font-semibold mb-2">Location:</h4>
-                <p className="text-muted-foreground">San Francisco, CA</p>
+                <p className="text-muted-foreground">Kolkata</p>
               </div>
               <div>
                 <h4 className="font-semibold mb-2">Email:</h4>
-                <p className="text-muted-foreground">your.email@example.com</p>
+                <p className="text-muted-foreground">rohansahoo2509@gmail.com</p>
               </div>
               <div>
                 <h4 className="font-semibold mb-2">Education:</h4>
-                <p className="text-muted-foreground">B.S. Computer Science</p>
+                <p className="text-muted-foreground">B-Tech CSE</p>
               </div>
               <div>
                 <h4 className="font-semibold mb-2">Experience:</h4>
-                <p className="text-muted-foreground">5+ Years</p>
+                <p className="text-muted-foreground">1-2 Years</p>
               </div>
             </div>
           </div>
@@ -72,7 +73,7 @@ const About = () => {
           <div className="order-1 md:order-2 flex justify-center">
             <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-primary shadow-lg">
               <img
-                src="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                src="./rohan_main.jpg"
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
